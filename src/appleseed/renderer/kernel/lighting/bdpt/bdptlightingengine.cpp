@@ -166,14 +166,15 @@ namespace
             assert(num_camera_vertices <= m_num_max_vertices - 1);
             assert(num_light_vertices <= m_num_max_vertices);
 
-            for (size_t s = 0; s < num_light_vertices + 1; s++)
-            {
-                for (size_t t = 2; t < num_camera_vertices + 2; t++)
-                {
-                    if (s + t <= m_num_max_vertices)
-                        connect(shading_context, shading_point, light_vertices, camera_vertices, s, t, radiance);
-                }
-            }
+//            for (size_t s = 0; s < num_light_vertices + 1; s++)
+//            {
+//                for (size_t t = 2; t < num_camera_vertices + 2; t++)
+//                {
+//                    if (s + t <= m_num_max_vertices)
+//                        connect(shading_context, shading_point, light_vertices, camera_vertices, s, t, radiance);
+//                }
+//            }
+            connect(shading_context, shading_point, light_vertices, camera_vertices, 3, 3, radiance);
 
             delete[] camera_vertices;
             delete[] light_vertices;
@@ -350,6 +351,7 @@ namespace
 
             if (s == 0)
             {
+//                return;
                 // camera subpath is a complete path
                 const BDPTVertex& camera_vertex = camera_vertices[t - 2];
                 if (!camera_vertex.m_is_light_vertex)
@@ -360,6 +362,7 @@ namespace
             }
             else if (s == 1)
             {
+//                return;
                 // only one light vertex
                 const BDPTVertex& light_vertex = light_vertices[s - 1];
                 const BDPTVertex& camera_vertex = camera_vertices[t - 2];
@@ -388,6 +391,7 @@ namespace
             }
             else
             {
+//                return;
                 const BDPTVertex& light_vertex = light_vertices[s - 1];
                 const BDPTVertex& camera_vertex = camera_vertices[t - 2];
 
@@ -432,7 +436,8 @@ namespace
                 return;
 
             /// TODO:: unhandled case where (numerator <= 0) (specular surface / impossible path).
-            assert(FP<float>::is_finite(numerator));
+            if (!FP<float>::is_finite(numerator))
+                return;
             assert(numerator > 0.0f);
 
             float denominator = 0.0f;
@@ -441,7 +446,8 @@ namespace
                 denominator += compute_path_density(light_vertices, camera_vertices, s, t, i, s + t - i);
 
             /// TODO:: unhandled case where (denominator <= 0) (specular surface / impossible path).
-            assert(FP<float>::is_finite(denominator));
+            if (!FP<float>::is_finite(denominator))
+                return;
             assert(denominator > 0.0f);
 
             const float mis_weight = numerator / denominator;
