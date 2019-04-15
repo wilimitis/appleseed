@@ -174,7 +174,7 @@ namespace
 //                        connect(shading_context, shading_point, light_vertices, camera_vertices, s, t, radiance);
 //                }
 //            }
-            connect(shading_context, shading_point, light_vertices, camera_vertices, 1, 4, radiance);
+            connect(shading_context, shading_point, light_vertices, camera_vertices, 1, 3, radiance);
 
             delete[] camera_vertices;
             delete[] light_vertices;
